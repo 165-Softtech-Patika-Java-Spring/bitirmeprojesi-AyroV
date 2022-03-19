@@ -1,0 +1,18 @@
+{
+  "properties": [
+    {
+      "name": "application.title",
+      "type": "java.lang.String",
+      "description": "Description for application.title."
+    },
+    {
+      "name": "softtechspringboot.jwt.security.app.key",
+      "type": "java.lang.String",
+      "description": "Description for softtechspringboot.jwt.security.app.key."
+    },
+    {
+      "name": "softtechspringboot.jwt.security.expire.time",
+      "type": "java.lang.String",
+      "description": "Description for softtechspringboot.jwt.security.expire.time."
+    }
+  ] }

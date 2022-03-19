@@ -21,7 +21,7 @@ public class SwaggerConfig {
         final String securitySchemeName = "bearerAuth";
         final String apiTitle = String.format("%s API", APP_TITLE.toUpperCase());
 
-        /*return new OpenAPI().addSecurityItem(
+        return new OpenAPI().addSecurityItem(
                 new SecurityRequirement().addList(securitySchemeName)
             )
             .components(
@@ -34,8 +34,8 @@ public class SwaggerConfig {
                             .bearerFormat("JWT")
                 )
             )
-            .info(new Info().title(apiTitle).version("1"));*/
+            .info(new Info().title(apiTitle).version("1"));
 
-        return new OpenAPI().info(new Info().title(apiTitle).version("1"));
+        //return new OpenAPI().info(new Info().title(apiTitle).version("1"));
     }
 }
