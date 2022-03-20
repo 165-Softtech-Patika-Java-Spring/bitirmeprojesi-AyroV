@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @Setter
 public class ProductType extends BaseEntity {
     @Id
-    @SequenceGenerator(name = "TypeGen" , sequenceName = "PRODUCT_TYPE_ID_SEQ")
+    @SequenceGenerator(name = "TypeGen", sequenceName = "PRODUCT_TYPE_ID_SEQ")
     @GeneratedValue(generator = "TypeGen")
     private Long id;
     private String name;
