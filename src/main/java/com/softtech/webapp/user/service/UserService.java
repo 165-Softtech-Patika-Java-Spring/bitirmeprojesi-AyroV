@@ -78,6 +78,9 @@ public class UserService {
             isUsernameUnique(user.getUsernameUpper());
         }
 
+        String password = passwordEncoder.encode(user.getPassword());
+        user.setPassword(password);
+
         user = userEntityService.save(user, true);
         return mapper.map(user, UserGetDto.class);
     }

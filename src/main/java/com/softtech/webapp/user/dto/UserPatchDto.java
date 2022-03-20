@@ -7,4 +7,5 @@ public class UserPatchDto {
     private String username;
     private String name;
     private String surname;
+    private String password;
 }
