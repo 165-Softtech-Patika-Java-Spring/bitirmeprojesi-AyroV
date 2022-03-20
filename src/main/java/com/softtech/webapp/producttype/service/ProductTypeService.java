@@ -45,6 +45,7 @@ public class ProductTypeService {
 
     public ProductTypeGetDto save(ProductTypePostDto productTypePostDto) {
         isNameUnique(productTypePostDto.getName().toUpperCase());
+        validateTax(productTypePostDto.getTaxPercentage());
 
         ProductType productType = mapper.map(productTypePostDto, ProductType.class);
         productType.setProductCount(0);
@@ -58,6 +59,8 @@ public class ProductTypeService {
     }
 
     public ProductTypeGetDto update(ProductTypePatchDto productTypePatchDto, Long id) {
+        validateTax(productTypePatchDto.getTaxPercentage());
+
         ProductType productType = productTypeEntityService.getByIdWithControl(id);
 
         mapper.getConfiguration().setSkipNullEnabled(true);
@@ -80,5 +83,11 @@ public class ProductTypeService {
         ProductType productType = productTypeEntityService.findByNameUpper(name);
         if(productType != null)
             throw new BusinessException(ProductTypeErrorMessage.NAME_ALREADY_TAKEN);
+    }
+
+    private void validateTax(Integer tax) {
+        if(tax.compareTo(0) < 0) {
+            throw new BusinessException(ProductTypeErrorMessage.TAX_BELOW_ZERO);
+        }
     }
 }
