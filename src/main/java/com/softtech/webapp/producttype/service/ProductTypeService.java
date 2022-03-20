@@ -3,6 +3,8 @@ package com.softtech.webapp.producttype.service;
 import com.softtech.webapp.general.enums.ErrorMessage;
 import com.softtech.webapp.general.exceptions.BusinessException;
 import com.softtech.webapp.general.exceptions.ItemNotFoundException;
+import com.softtech.webapp.product.entity.Product;
+import com.softtech.webapp.product.service.ProductEntityService;
 import com.softtech.webapp.producttype.dto.ProductTypeGetDto;
 import com.softtech.webapp.producttype.dto.ProductTypePatchDto;
 import com.softtech.webapp.producttype.dto.ProductTypePostDto;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class ProductTypeService {
     private final ProductTypeEntityService productTypeEntityService;
+    private final ProductEntityService productEntityService;
     private final ModelMapper mapper;
 
     public List<ProductTypeGetDto> findAll() {
@@ -49,9 +52,9 @@ public class ProductTypeService {
 
         ProductType productType = mapper.map(productTypePostDto, ProductType.class);
         productType.setProductCount(0);
-        productType.setAvgPrice(BigDecimal.valueOf(0.0));
-        productType.setMaxPrice(BigDecimal.valueOf(0.0));
-        productType.setMinPrice(BigDecimal.valueOf(0.0));
+        productType.setAvgPrice(BigDecimal.ZERO);
+        productType.setMaxPrice(BigDecimal.ZERO);
+        productType.setMinPrice(BigDecimal.ZERO);
 
         productType = productTypeEntityService.save(productType, false);
 
@@ -63,12 +66,29 @@ public class ProductTypeService {
 
         ProductType productType = productTypeEntityService.getByIdWithControl(id);
 
-        mapper.getConfiguration().setSkipNullEnabled(true);
-        mapper.map(productTypePatchDto, productType);
+        productType.setTaxPercentage(productTypePatchDto.getTaxPercentage());
+        productType.setMinPrice(BigDecimal.ZERO);
 
-        //Update all product prices according to new tax
+        List<Product> productList = productEntityService.findAllByProductTypeId(id);
 
-        //Update max-min-avg prices according to new prices
+        BigDecimal sumPrice = BigDecimal.ZERO;
+        BigDecimal avgPrice;
+
+        for(Product product : productList) {
+            BigDecimal newPrice = product.getPrice().add(product.getPrice().divide(BigDecimal.valueOf(100.0)).multiply(BigDecimal.valueOf(productType.getTaxPercentage())));
+            product.setPriceAfterTax(newPrice);
+            productEntityService.save(product, true);
+
+            if(productType.getMaxPrice().compareTo(newPrice) < 0)
+                productType.setMaxPrice(newPrice);
+            if(productType.getMinPrice().compareTo(newPrice) > 0 || productType.getMinPrice().equals(BigDecimal.ZERO))
+                productType.setMinPrice(newPrice);
+
+            sumPrice = sumPrice.add(newPrice);
+        }
+
+        avgPrice = sumPrice.divide(BigDecimal.valueOf(productType.getProductCount()));
+        productType.setAvgPrice(avgPrice);
 
         productType = productTypeEntityService.save(productType, true);
         return mapper.map(productType, ProductTypeGetDto.class);
