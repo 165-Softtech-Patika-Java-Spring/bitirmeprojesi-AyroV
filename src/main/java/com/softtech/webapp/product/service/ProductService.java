@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -77,12 +76,12 @@ public class ProductService {
 
         BigDecimal priceAfterTax = product.getPrice().add(product.getPrice().divide(BigDecimal.valueOf(100.0)).multiply(BigDecimal.valueOf(productType.getTaxPercentage())));
         productType.setProductCount(productType.getProductCount() + 1);
+        updateProductType(productType, priceAfterTax, Optional.empty());
 
         product.setPriceAfterTax(priceAfterTax);
         product.setProductType(productType.getName());
 
         product = productEntityService.save(product, false);
-        productTypeEntityService.save(productType, true);
 
         return mapper.map(product, ProductGetDto.class);
     }
@@ -98,7 +97,7 @@ public class ProductService {
         ProductType productType = productTypeEntityService.getByIdWithControl(product.getProductTypeId());
 
         BigDecimal priceAfterTax = product.getPrice().divide(BigDecimal.valueOf(100.0)).multiply(BigDecimal.valueOf(productType.getTaxPercentage()));
-        updateAverage(productType, priceAfterTax, Optional.of(product.getPriceAfterTax().subtract(priceAfterTax)));
+        updateProductType(productType, priceAfterTax, Optional.of(product.getPriceAfterTax().subtract(priceAfterTax)));
 
         product.setPriceAfterTax(priceAfterTax);
         product.setProductType(productType.getName());
@@ -107,10 +106,10 @@ public class ProductService {
         return mapper.map(product, ProductGetDto.class);
     }
 
-    private void updateAverage(ProductType productType, BigDecimal priceAfterTax, Optional<BigDecimal> priceDifference) {
+    private void updateProductType(ProductType productType, BigDecimal priceAfterTax, Optional<BigDecimal> priceDifference) {
         if(productType.getMaxPrice().compareTo(priceAfterTax) < 0)
             productType.setMaxPrice(priceAfterTax);
-        if(productType.getMinPrice().compareTo(priceAfterTax) > 0)
+        if(productType.getMinPrice().compareTo(priceAfterTax) > 0 || productType.getMinPrice().compareTo(BigDecimal.ZERO) == 0)
             productType.setMinPrice(priceAfterTax);
 
         if (priceDifference.isPresent()) {
@@ -123,6 +122,7 @@ public class ProductService {
         );
 
         productType.setAvgPrice(newAverage);
+        productTypeEntityService.save(productType, true);
     }
 
     private void validateProduct(Product product) {
