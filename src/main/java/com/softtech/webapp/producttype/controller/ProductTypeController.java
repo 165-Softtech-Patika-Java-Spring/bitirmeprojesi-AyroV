@@ -42,7 +42,7 @@ public class ProductTypeController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody ProductTypePatchDto productTypePatchDto) {
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody @Valid ProductTypePatchDto productTypePatchDto) {
         ProductTypeGetDto productTypeGetDto = productTypeService.update(productTypePatchDto, id);
         return ResponseEntity.ok().body(productTypeGetDto);
     }
