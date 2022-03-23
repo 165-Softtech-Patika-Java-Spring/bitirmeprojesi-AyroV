@@ -60,7 +60,7 @@ public class AuthenticationService {
         JwtUserDetails jwtUserDetails = getCurrentJwtUserDetails();
         if (jwtUserDetails == null)
             return null;
-        
+
         return jwtUserDetails.getId();
     }
 

@@ -4,6 +4,7 @@ import com.softtech.webapp.user.dto.*;
 import com.softtech.webapp.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +36,13 @@ public class UserController {
     public ResponseEntity<?> findById(@PathVariable Long id) {
         UserGetDto userGetDto = userService.findById(id);
         return ResponseEntity.ok().body(userGetDto);
+    }
+
+    @Operation(tags = "User Controller")
+    @PostMapping
+    public ResponseEntity<?> save(@RequestBody @Valid UserPostDto userPostDto) {
+        UserGetDto userGetDto = userService.save(userPostDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userGetDto);
     }
 
     @Operation(tags = "User Controller")
