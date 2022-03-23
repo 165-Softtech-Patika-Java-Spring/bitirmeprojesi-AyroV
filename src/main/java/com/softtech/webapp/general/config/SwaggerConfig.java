@@ -35,7 +35,5 @@ public class SwaggerConfig {
                 )
             )
             .info(new Info().title(apiTitle).version("1"));
-
-        //return new OpenAPI().info(new Info().title(apiTitle).version("1"));
     }
 }
