@@ -2,10 +2,12 @@ package com.softtech.webapp.general.service;
 
 import com.softtech.webapp.general.entity.BaseEntity;
 import com.softtech.webapp.general.enums.ErrorMessage;
-import com.softtech.webapp.general.enums.IErrorMessage;
 import com.softtech.webapp.general.exceptions.ItemNotFoundException;
 import com.softtech.webapp.general.util.DateUtil;
+import com.softtech.webapp.security.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,12 @@ import java.util.Optional;
 public abstract class BaseEntityService<E extends BaseEntity, D extends JpaRepository<E, Long>> {
     private final D dao;
     private final Class<E> type;
+    private AuthenticationService authenticationService;
+
+    @Autowired
+    public void setAuthenticationService(@Lazy AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
+    }
 
     public List<E> findAll(){
         return dao.findAll();
@@ -52,11 +60,11 @@ public abstract class BaseEntityService<E extends BaseEntity, D extends JpaRepos
 
         if(isUpdate) {
             entity.setUpdateDate(date);
-            entity.setUpdatedBy(1L);
+            entity.setUpdatedBy(this.getCurrentUserId());
         }
         else {
             entity.setCreateDate(date);
-            entity.setCreatedBy(1L);
+            entity.setCreatedBy(this.getCurrentUserId());
         }
     }
 
@@ -72,5 +80,9 @@ public abstract class BaseEntityService<E extends BaseEntity, D extends JpaRepos
         }
 
         return entity;
+    }
+
+    public Long getCurrentUserId() {
+        return authenticationService.getCurrentUserId();
     }
 }
