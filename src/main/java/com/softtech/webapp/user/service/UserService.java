@@ -86,13 +86,13 @@ public class UserService {
 
     private void validateUser(User user) {
         if(user == null)
-            throw new ItemNotFoundException(ErrorMessage.ITEM_NOT_FOUND, this.getClass().getSimpleName());
+            throw new ItemNotFoundException(ErrorMessage.ITEM_NOT_FOUND, User.class.getSimpleName());
     }
 
     private void isUserExist(Long id) {
         boolean isExist = userEntityService.existsById(id);
         if (!isExist){
-            throw new ItemNotFoundException(ErrorMessage.ITEM_NOT_FOUND, this.getClass().getSimpleName());
+            throw new ItemNotFoundException(ErrorMessage.ITEM_NOT_FOUND, User.class.getSimpleName());
         }
     }
 

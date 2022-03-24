@@ -96,7 +96,7 @@ public class ProductTypeService {
 
     private void validateProductType(ProductType productType) {
         if(productType == null)
-            throw new ItemNotFoundException(ErrorMessage.ITEM_NOT_FOUND, this.getClass().getSimpleName());
+            throw new ItemNotFoundException(ErrorMessage.ITEM_NOT_FOUND, ProductType.class.getSimpleName());
     }
 
     private void isNameUnique(String name) {
