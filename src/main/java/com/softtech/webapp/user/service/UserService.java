@@ -70,13 +70,13 @@ public class UserService {
     public UserGetDto update(UserPatchDto userPatchDto, Long id) {
         User user = userEntityService.getByIdWithControl(id);
 
+        if(userPatchDto.getUsername() != null) {
+            isUsernameUnique(userPatchDto.getUsername().toUpperCase());
+            user.setUsernameUpper(userPatchDto.getUsername().toUpperCase());
+        }
+
         mapper.getConfiguration().setSkipNullEnabled(true);
         mapper.map(userPatchDto, user);
-
-        if(userPatchDto.getUsername() != null) {
-            user.setUsernameUpper(user.getUsername().toUpperCase());
-            isUsernameUnique(user.getUsernameUpper());
-        }
 
         String password = passwordEncoder.encode(user.getPassword());
         user.setPassword(password);
