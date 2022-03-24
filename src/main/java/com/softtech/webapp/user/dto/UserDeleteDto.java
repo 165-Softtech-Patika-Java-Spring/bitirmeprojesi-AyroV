@@ -1,13 +1,14 @@
 package com.softtech.webapp.user.dto;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserDeleteDto {
     @NotNull(message = "Username cannot be null")
     @NotBlank(message = "Username cannot be blank")
