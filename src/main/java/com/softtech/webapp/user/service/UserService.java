@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -60,7 +59,7 @@ public class UserService {
     public void delete(UserDeleteDto userDeleteDto, Long id) {
         User user = userEntityService.findByUsername(userDeleteDto.getUsername());
         validateUser(user);
-        if (!Objects.equals(user.getId(), id)) {
+        if (user.getId().compareTo(id) != 0) {
             throw new BusinessException(UserErrorMessage.ID_USERNAME_NOT_MATCH);
         }
 
@@ -87,13 +86,13 @@ public class UserService {
 
     private void validateUser(User user) {
         if(user == null)
-            throw new ItemNotFoundException(ErrorMessage.ITEM_NOT_FOUND);
+            throw new ItemNotFoundException(ErrorMessage.ITEM_NOT_FOUND, this.getClass().getSimpleName());
     }
 
     private void isUserExist(Long id) {
         boolean isExist = userEntityService.existsById(id);
         if (!isExist){
-            throw new ItemNotFoundException(ErrorMessage.ITEM_NOT_FOUND);
+            throw new ItemNotFoundException(ErrorMessage.ITEM_NOT_FOUND, this.getClass().getSimpleName());
         }
     }
 
