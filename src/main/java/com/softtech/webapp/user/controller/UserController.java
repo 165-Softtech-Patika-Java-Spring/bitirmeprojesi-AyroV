@@ -10,6 +10,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -21,10 +22,12 @@ public class UserController {
 
     @Operation(tags = "User Controller")
     @GetMapping
-    public ResponseEntity<?> findAll(@RequestParam(required = false) String username) {
+    public ResponseEntity<List<UserGetDto>> findAll(@RequestParam(required = false) String username) {
         if (username != null) {
             UserGetDto userGetDto = userService.findByUsername(username);
-            return ResponseEntity.ok().body(userGetDto);
+            List<UserGetDto> userList = new ArrayList<>();
+            userList.add(userGetDto);
+            return ResponseEntity.ok().body(userList);
         }
 
         List<UserGetDto> userGetDtoList = userService.findAll();
