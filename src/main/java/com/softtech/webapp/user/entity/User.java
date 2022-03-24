@@ -9,10 +9,12 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
+@Table(name = "USERS")
 public class User extends BaseEntity {
     @Id
     @SequenceGenerator(name = "UserGen", sequenceName = "USER_ID_SEQ")
     @GeneratedValue(generator = "UserGen")
+    @Column(name = "user_id")
     private Long id;
     private String username;
     private String usernameUpper;
